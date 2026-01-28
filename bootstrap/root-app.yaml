@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<your-org>/gitops-demo.git  # UPDATE THIS
+    repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
     targetRevision: main
     path: platform/argocd-apps
   destination:
