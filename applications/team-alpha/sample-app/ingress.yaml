@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sample-app-ingress
+  namespace: team-alpha
+  labels:
+    app: sample-app
+    team: alpha
+  annotations:
+    # Traefik-specific annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: sample-app.example.com  # UPDATE THIS to your domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-app
+                port:
+                  number: 80
+  # Uncomment below for TLS (requires cert-manager or manual secret)
+  # tls:
+  #   - hosts:
+  #       - sample-app.example.com
+  #     secretName: sample-app-tls

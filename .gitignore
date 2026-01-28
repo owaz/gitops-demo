@@ -1,0 +1,14 @@
+# Ignore local development files
+.DS_Store
+*.local
+.env
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore secrets (these should be managed via sealed-secrets or external secrets)
+**/secrets/
+*.secret.yaml
