@@ -45,10 +45,10 @@ spec:
           appName: "{{ .inputs.appName }}"
           repoPath: "{{ .inputs.repoPath }}"
           ingressHost: "{{ .inputs.ingressHost }}"
-          templateSource: applications/team-alpha/sample-app
+          templateSource: applications/_templates/app
           templates:
-            deployment: platform/port/templates/deployment.yaml
-            service: platform/port/templates/service.yaml
-            ingress: platform/port/templates/ingress.yaml
+            deployment: applications/_templates/app/deployment.yaml
+            service: applications/_templates/app/service.yaml
+            ingress: applications/_templates/app/ingress.yaml
           argocdManifest: platform/argocd-apps/platform-apps.yaml
           argocdAppName: "{{ .inputs.team }}-{{ .inputs.appName }}"
