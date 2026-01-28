@@ -12,4 +12,4 @@ data:
   #   login - allows to login using UI
   accounts.owais: apiKey, login
   # disables user. User is enabled by default
-  accounts.alice.enabled: "true"
+  accounts.owais.enabled: "true"
