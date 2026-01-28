@@ -65,3 +65,26 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: team-beta-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
+    targetRevision: main
+    path: applications/team-beta/Azure-Resources
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: team-beta
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
