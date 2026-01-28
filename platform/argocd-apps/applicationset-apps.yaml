@@ -1,0 +1,37 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: team-applications
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - git:
+        repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
+        revision: main
+        directories:
+          - path: applications/*/*
+  template:
+    metadata:
+      name: "{{path.segments[1]}}-{{path.basename}}"
+      labels:
+        app.kubernetes.io/name: "{{path.basename}}"
+        app.kubernetes.io/part-of: "{{path.segments[1]}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
+        targetRevision: main
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{path.segments[1]}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
