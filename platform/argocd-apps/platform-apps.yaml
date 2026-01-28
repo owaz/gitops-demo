@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<your-org>/gitops-demo.git  # UPDATE THIS
+    repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
     targetRevision: main
     path: platform/traefik
   destination:
@@ -33,7 +33,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<your-org>/gitops-demo.git  # UPDATE THIS
+    repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
     targetRevision: main
     path: platform/namespaces
   destination:
@@ -53,7 +53,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<your-org>/gitops-demo.git  # UPDATE THIS
+    repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
     targetRevision: main
     path: applications/team-alpha/sample-app
   destination:
