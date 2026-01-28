@@ -1,0 +1,54 @@
+apiVersion: port.io/v1alpha1
+kind: Action
+metadata:
+  name: provision-application
+  title: Provision Application
+  description: Create a new GitOps application folder and Argo CD entry.
+spec:
+  type: self-service
+  icon: GitHub
+  userInputs:
+    properties:
+      team:
+        type: string
+        title: Team
+        description: Team owning the application (e.g., team-alpha).
+      appName:
+        type: string
+        title: Application name
+        description: Application identifier used in Kubernetes resources.
+      repoPath:
+        type: string
+        title: Git repository path
+        description: Repository path that Argo CD should watch.
+        default: applications/{{ .inputs.team }}/{{ .inputs.appName }}
+      ingressHost:
+        type: string
+        title: Ingress host
+        description: DNS hostname for ingress routing.
+    required:
+      - team
+      - appName
+      - ingressHost
+  trigger:
+    type: WEBHOOK
+    webhook:
+      url: https://api.github.com/repos/<org>/<repo>/dispatches
+      method: POST
+      headers:
+        Accept: application/vnd.github+json
+        Authorization: Bearer {{ secrets.githubToken }}
+      body:
+        event_type: port-provision-application
+        client_payload:
+          team: "{{ .inputs.team }}"
+          appName: "{{ .inputs.appName }}"
+          repoPath: "{{ .inputs.repoPath }}"
+          ingressHost: "{{ .inputs.ingressHost }}"
+          templateSource: applications/team-alpha/sample-app
+          templates:
+            deployment: platform/port/templates/deployment.yaml
+            service: platform/port/templates/service.yaml
+            ingress: platform/port/templates/ingress.yaml
+          argocdManifest: platform/argocd-apps/platform-apps.yaml
+          argocdAppName: "{{ .inputs.team }}-{{ .inputs.appName }}"
