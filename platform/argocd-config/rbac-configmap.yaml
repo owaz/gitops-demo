@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # Policy grants full admin access to the owais user
+  policy.csv: |
+    g, owais, role:admin
+  # Default policy for authenticated users (optional - restrict if needed)
+  policy.default: role:readonly
