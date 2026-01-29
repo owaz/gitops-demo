@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prd4
+  namespace: alpha
+  labels:
+    app: prd4
+    team: alpha
+spec:
+  type: ClusterIP
+  selector:
+    app: prd4
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
