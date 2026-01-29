@@ -92,16 +92,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          if git diff --quiet; then
+          git add "applications/${TEAM_NAME}/${APP_NAME}"
+          if [ -f "platform/namespaces/app-${TEAM_NAME}.yaml" ]; then
+            git add "platform/namespaces/app-${TEAM_NAME}.yaml"
+          fi
+
+          if git diff --staged --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "applications/${TEAM_NAME}/${APP_NAME}"
-          if [ -f "platform/namespaces/app-${TEAM_NAME}.yaml" ]; then
-            git add "platform/namespaces/app-${TEAM_NAME}.yaml"
-          fi
           git commit -m "Provision application ${TEAM_NAME}/${APP_NAME}"
           git push origin HEAD
