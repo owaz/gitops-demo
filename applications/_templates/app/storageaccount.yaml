@@ -1,0 +1,23 @@
+apiVersion: storage.azure.com/v1api20230101
+kind: StorageAccount
+metadata:
+  name: st${TEAM_NAME}${APP_NAME}${STORAGE_SUFFIX}
+  namespace: ${TEAM_NAME}
+  labels:
+    app: ${APP_NAME}
+    team: ${TEAM_NAME}
+spec:
+  location: uaenorth
+  owner:
+    name: rg-${TEAM_NAME}-${APP_NAME}
+  kind: StorageV2
+  sku:
+    name: Standard_LRS
+  accessTier: Hot
+  allowBlobPublicAccess: false
+  allowSharedKeyAccess: true
+  minimumTlsVersion: TLS1_2
+  tags:
+    team: ${TEAM_NAME}
+    app: ${APP_NAME}
+    managed-by: gitops

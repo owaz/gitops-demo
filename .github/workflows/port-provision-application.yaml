@@ -42,6 +42,9 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Generate a 3-letter random suffix for globally unique storage account name
+          export STORAGE_SUFFIX=$(head /dev/urandom | tr -dc 'a-z0-9' | head -c 3)
+
           NAMESPACE_MANIFEST="platform/namespaces/app-${TEAM_NAME}.yaml"
           if [ ! -f "${NAMESPACE_MANIFEST}" ]; then
             TEAM_LABEL="${TEAM_NAME#team-}"
@@ -88,7 +91,7 @@ jobs:
           DEST_DIR="applications/${TEAM_NAME}/${APP_NAME}"
           mkdir -p "${DEST_DIR}"
 
-          for template in deployment.yaml service.yaml ingress.yaml resourcegroup.yaml; do
+          for template in deployment.yaml service.yaml ingress.yaml resourcegroup.yaml storageaccount.yaml; do
             envsubst < "${TEMPLATE_DIR}/${template}" > "${DEST_DIR}/${template}"
           done
 
