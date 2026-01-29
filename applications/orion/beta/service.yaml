@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: beta
+  namespace: orion
+  labels:
+    app: beta
+    team: orion
+spec:
+  type: ClusterIP
+  selector:
+    app: beta
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
