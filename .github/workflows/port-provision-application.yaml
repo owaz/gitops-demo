@@ -15,10 +15,6 @@ on:
         description: 'Ingress host'
         required: false
         type: string
-      templateSource:
-        description: 'Template source directory'
-        required: false
-        type: string
   repository_dispatch:
     types:
       - port-provision-application
@@ -33,7 +29,7 @@ jobs:
       APP_NAME: ${{ github.event.inputs.appName || github.event.client_payload.appName }}
       TEAM_NAME: ${{ github.event.inputs.team || github.event.client_payload.team }}
       INGRESS_HOST: ${{ github.event.inputs.ingressHost || github.event.client_payload.ingressHost }}
-      TEMPLATE_DIR: ${{ github.event.inputs.templateSource || github.event.client_payload.templateSource }}
+      TEMPLATE_DIR: applications/_templates/app
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,10 +37,6 @@ jobs:
       - name: Render application templates
         run: |
           set -euo pipefail
-
-          if [ -z "${TEMPLATE_DIR}" ]; then
-            TEMPLATE_DIR="applications/_templates/app"
-          fi
 
           NAMESPACE_MANIFEST="platform/namespaces/app-${TEAM_NAME}.yaml"
           if [ ! -f "${NAMESPACE_MANIFEST}" ]; then
