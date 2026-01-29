@@ -1,6 +1,24 @@
 name: Provision application from Port
 
 on:
+  workflow_dispatch:
+    inputs:
+      appName:
+        description: 'Application name'
+        required: true
+        type: string
+      team:
+        description: 'Team name'
+        required: true
+        type: string
+      ingressHost:
+        description: 'Ingress host'
+        required: false
+        type: string
+      templateSource:
+        description: 'Template source directory'
+        required: false
+        type: string
   repository_dispatch:
     types:
       - port-provision-application
@@ -12,10 +30,10 @@ jobs:
   provision:
     runs-on: ubuntu-latest
     env:
-      APP_NAME: ${{ github.event.client_payload.appName }}
-      TEAM_NAME: ${{ github.event.client_payload.team }}
-      INGRESS_HOST: ${{ github.event.client_payload.ingressHost }}
-      TEMPLATE_DIR: ${{ github.event.client_payload.templateSource }}
+      APP_NAME: ${{ github.event.inputs.appName || github.event.client_payload.appName }}
+      TEAM_NAME: ${{ github.event.inputs.team || github.event.client_payload.team }}
+      INGRESS_HOST: ${{ github.event.inputs.ingressHost || github.event.client_payload.ingressHost }}
+      TEMPLATE_DIR: ${{ github.event.inputs.templateSource || github.event.client_payload.templateSource }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
