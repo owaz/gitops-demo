@@ -18,10 +18,10 @@ spec:
             exclude: true
   template:
     metadata:
-      name: "{{ index .path.segments 1 }}-{{ .path.basename }}"
+      name: "{{ index .path.segments 1 | lower }}-{{ .path.basename | lower }}"
       labels:
-        app.kubernetes.io/name: "{{ .path.basename }}"
-        app.kubernetes.io/part-of: "{{ index .path.segments 1 }}"
+        app.kubernetes.io/name: "{{ .path.basename | lower }}"
+        app.kubernetes.io/part-of: "{{ index .path.segments 1 | lower }}"
     spec:
       project: default
       source:
