@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev
+  namespace: alpha
+  labels:
+    app: dev
+    team: alpha
+spec:
+  type: ClusterIP
+  selector:
+    app: dev
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
