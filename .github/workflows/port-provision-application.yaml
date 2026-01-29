@@ -112,13 +112,13 @@ jobs:
           git push origin HEAD
 
       - name: Report success to Port
-        if: success() && github.event.inputs.port_context != ''
+        if: ${{ success() && inputs.port_context }}
         uses: port-labs/port-github-action@v1
         with:
           clientId: ${{ secrets.PORT_CLIENT_ID }}
           clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
           operation: PATCH_RUN
-          runId: ${{ fromJson(github.event.inputs.port_context).run.id }}
+          runId: ${{ fromJson(inputs.port_context).run.id }}
           status: "SUCCESS"
           logMessage: |
             ✅ Application provisioned successfully!
@@ -127,12 +127,12 @@ jobs:
             - Path: applications/${{ github.event.inputs.team }}/${{ github.event.inputs.appName }}
 
       - name: Report failure to Port
-        if: failure() && github.event.inputs.port_context != ''
+        if: ${{ failure() && inputs.port_context }}
         uses: port-labs/port-github-action@v1
         with:
           clientId: ${{ secrets.PORT_CLIENT_ID }}
           clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
           operation: PATCH_RUN
-          runId: ${{ fromJson(github.event.inputs.port_context).run.id }}
+          runId: ${{ fromJson(inputs.port_context).run.id }}
           status: "FAILURE"
           logMessage: "❌ Provisioning failed. Check logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
