@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prd5-ingress
+  namespace: alpha
+  labels:
+    app: prd5
+    team: alpha
+  annotations:
+    # Traefik-specific annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: alpha.prd5.abc.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prd5
+                port:
+                  number: 80
+  # Uncomment below for TLS (requires cert-manager or manual secret)
+  # tls:
+  #   - hosts:
+  #       - alpha.prd5.abc.com
+  #     secretName: prd5-tls

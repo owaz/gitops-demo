@@ -1,0 +1,23 @@
+apiVersion: storage.azure.com/v1api20230101
+kind: StorageAccount
+metadata:
+  name: stalphaprd5j0o
+  namespace: alpha
+  labels:
+    app: prd5
+    team: alpha
+spec:
+  location: uaenorth
+  owner:
+    name: rg-alpha-prd5
+  kind: StorageV2
+  sku:
+    name: Standard_LRS
+  accessTier: Hot
+  allowBlobPublicAccess: false
+  allowSharedKeyAccess: true
+  minimumTlsVersion: TLS1_2
+  tags:
+    team: alpha
+    app: prd5
+    managed-by: gitops

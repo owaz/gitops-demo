@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prd5
+  namespace: alpha
+  labels:
+    app: prd5
+    team: alpha
+spec:
+  type: ClusterIP
+  selector:
+    app: prd5
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
