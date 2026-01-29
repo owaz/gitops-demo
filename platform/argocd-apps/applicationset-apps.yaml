@@ -16,19 +16,19 @@ spec:
           - path: applications/*/*
   template:
     metadata:
-      name: "{{path.segments[1]}}-{{path.basename}}"
+      name: "{{ index .path.segments 1 }}-{{ .path.basename }}"
       labels:
-        app.kubernetes.io/name: "{{path.basename}}"
-        app.kubernetes.io/part-of: "{{path.segments[1]}}"
+        app.kubernetes.io/name: "{{ .path.basename }}"
+        app.kubernetes.io/part-of: "{{ index .path.segments 1 }}"
     spec:
       project: default
       source:
         repoURL: https://github.com/owaz/gitops-demo.git  # UPDATE THIS
         targetRevision: main
-        path: "{{path}}"
+        path: "{{ .path.path }}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{path.segments[1]}}"
+        namespace: "{{ index .path.segments 1 }}"
       syncPolicy:
         automated:
           prune: true
