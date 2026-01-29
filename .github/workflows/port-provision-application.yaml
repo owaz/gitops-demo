@@ -25,6 +25,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   provision:
@@ -95,27 +96,47 @@ jobs:
             envsubst < "${TEMPLATE_DIR}/${template}" > "${DEST_DIR}/${template}"
           done
 
-      - name: Commit and push changes
-        run: |
-          set -euo pipefail
+      - name: Create Pull Request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Provision application ${{ env.TEAM_NAME }}/${{ env.APP_NAME }}"
+          branch: "provision/${{ env.TEAM_NAME }}-${{ env.APP_NAME }}-${{ github.run_id }}"
+          delete-branch: true
+          title: "🚀 Provision application: ${{ env.TEAM_NAME }}/${{ env.APP_NAME }}"
+          body: |
+            ## Application Provisioning Request
 
-          git add "applications/${TEAM_NAME}/${APP_NAME}"
-          if [ -f "platform/namespaces/app-${TEAM_NAME}.yaml" ]; then
-            git add "platform/namespaces/app-${TEAM_NAME}.yaml"
-          fi
+            This PR was automatically created to provision a new application.
 
-          if git diff --staged --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
+            | Property | Value |
+            |----------|-------|
+            | **Team** | `${{ env.TEAM_NAME }}` |
+            | **Application** | `${{ env.APP_NAME }}` |
+            | **Ingress Host** | `${{ env.INGRESS_HOST }}` |
 
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "Provision application ${TEAM_NAME}/${APP_NAME}"
-          git push origin HEAD
+            ### Files Created
+            - `applications/${{ env.TEAM_NAME }}/${{ env.APP_NAME }}/deployment.yaml`
+            - `applications/${{ env.TEAM_NAME }}/${{ env.APP_NAME }}/service.yaml`
+            - `applications/${{ env.TEAM_NAME }}/${{ env.APP_NAME }}/ingress.yaml`
+            - `applications/${{ env.TEAM_NAME }}/${{ env.APP_NAME }}/resourcegroup.yaml`
+            - `applications/${{ env.TEAM_NAME }}/${{ env.APP_NAME }}/storageaccount.yaml`
+
+            ### Review Checklist
+            - [ ] Resource configurations are correct
+            - [ ] Ingress host is valid
+            - [ ] Team namespace exists or will be created
+
+            ---
+            *Triggered by GitHub Actions run [${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          labels: |
+            provisioning
+            automated
+          assignees: ${{ github.actor }}
 
       - name: Report success to Port
-        if: success()
+        if: success() && steps.create-pr.outputs.pull-request-number
         uses: port-labs/port-github-action@v1
         with:
           clientId: ${{ secrets.PORT_CLIENT_ID }}
@@ -124,10 +145,12 @@ jobs:
           runId: ${{ fromJson(github.event.inputs.port_context).runId }}
           status: "SUCCESS"
           logMessage: |
-            ✅ Application provisioned successfully!
-            - Team: ${{ github.event.inputs.team }}
-            - App: ${{ github.event.inputs.appName }}
-            - Path: applications/${{ github.event.inputs.team }}/${{ github.event.inputs.appName }}
+            ✅ Pull Request created for review!
+            - Team: ${{ env.TEAM_NAME }}
+            - App: ${{ env.APP_NAME }}
+            - PR: ${{ steps.create-pr.outputs.pull-request-url }}
+            
+            Please review and merge the PR to complete provisioning.
 
       - name: Report failure to Port
         if: failure()
