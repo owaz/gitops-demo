@@ -14,6 +14,8 @@ spec:
         revision: main
         directories:
           - path: applications/*/*
+          - path: applications/_templates/*
+            exclude: true
   template:
     metadata:
       name: "{{ index .path.segments 1 }}-{{ .path.basename }}"
