@@ -1,0 +1,14 @@
+apiVersion: resources.azure.com/v1api20200601
+kind: ResourceGroup
+metadata:
+  name: rg-alpha-demoapp
+  namespace: alpha
+  labels:
+    app: demoapp
+    team: alpha
+spec:
+  location: uaenorth
+  tags:
+    team: alpha
+    app: demoapp
+    managed-by: gitops
