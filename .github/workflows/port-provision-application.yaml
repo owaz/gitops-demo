@@ -15,6 +15,10 @@ on:
         description: 'Ingress host'
         required: false
         type: string
+      port_context:
+        description: 'Port context (Portal metadata)'
+        required: false
+        type: string
   repository_dispatch:
     types:
       - port-provision-application
@@ -106,3 +110,29 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "Provision application ${TEAM_NAME}/${APP_NAME}"
           git push origin HEAD
+
+      - name: Report success to Port
+        if: success() && github.event.inputs.port_context
+        uses: port-labs/port-github-action@v1
+        with:
+          clientId: ${{ secrets.PORT_CLIENT_ID }}
+          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          operation: PATCH_RUN
+          runId: ${{ fromJson(github.event.inputs.port_context).runId }}
+          status: "SUCCESS"
+          logMessage: |
+            ✅ Application provisioned successfully!
+            - Team: ${{ github.event.inputs.team }}
+            - App: ${{ github.event.inputs.appName }}
+            - Path: applications/${{ github.event.inputs.team }}/${{ github.event.inputs.appName }}
+
+      - name: Report failure to Port
+        if: failure() && github.event.inputs.port_context
+        uses: port-labs/port-github-action@v1
+        with:
+          clientId: ${{ secrets.PORT_CLIENT_ID }}
+          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          operation: PATCH_RUN
+          runId: ${{ fromJson(github.event.inputs.port_context).runId }}
+          status: "FAILURE"
+          logMessage: "❌ Provisioning failed. Check logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
