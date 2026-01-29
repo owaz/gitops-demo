@@ -134,31 +134,3 @@ jobs:
             provisioning
             automated
           assignees: ${{ github.actor }}
-
-      - name: Report success to Port
-        if: success() && steps.create-pr.outputs.pull-request-number
-        uses: port-labs/port-github-action@v1
-        with:
-          clientId: ${{ secrets.PORT_CLIENT_ID }}
-          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
-          operation: PATCH_RUN
-          runId: ${{ fromJson(github.event.inputs.port_context).runId }}
-          status: "SUCCESS"
-          logMessage: |
-            ✅ Pull Request created for review!
-            - Team: ${{ env.TEAM_NAME }}
-            - App: ${{ env.APP_NAME }}
-            - PR: ${{ steps.create-pr.outputs.pull-request-url }}
-            
-            Please review and merge the PR to complete provisioning.
-
-      - name: Report failure to Port
-        if: failure()
-        uses: port-labs/port-github-action@v1
-        with:
-          clientId: ${{ secrets.PORT_CLIENT_ID }}
-          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
-          operation: PATCH_RUN
-          runId: ${{ fromJson(github.event.inputs.port_context).runId }}
-          status: "FAILURE"
-          logMessage: "❌ Provisioning failed. Check logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
